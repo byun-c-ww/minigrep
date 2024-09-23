@@ -10,13 +10,8 @@ fn main() {
       println!("error building config! error: {}", err);
       process::exit(1);
     });
-    // what is a rust way of ensuring rust dont panic if no argument was provided?
-    // use result type for config?
-    println!("search query is {}",config.search_query);
-    println!("file path is {}",config.file_path);    
     if let Err(e) = minigrep::run(config) {
         println!("Application Error! {e}");
         process::exit(1);
     }
-
 }

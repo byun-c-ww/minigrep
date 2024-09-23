@@ -1,9 +1,11 @@
 use std::error::Error;
-use std::fs;
+use std::{fs, vec};
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let file_content = fs::read_to_string(config.file_path)?;
-    println!("file content is:\n {}", file_content);
+    for line in search(&config.search_query, &file_content) {
+        println!("{}",line);
+    }
     Ok(())
 }
 
@@ -21,4 +23,30 @@ impl Config {
     
         Ok(Config { search_query, file_path })
     }   
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+  let mut result_string = Vec::new();
+  for line in contents.lines() {
+    if line.contains(query) {
+      result_string.push(line);
+    }
+  }
+  result_string
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
 }
